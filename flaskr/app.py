@@ -1,5 +1,6 @@
 from flaskr import create_app
-from .modelos import db, Album, Usuario, Medio
+from .modelos import db, Album, Usuario, Medio, Cancion
+from .modelos import AlbumSchema, UsuarioSchema, CancionSchema
 
 app = create_app('default')
 app_context = app.app_context()
@@ -11,17 +12,16 @@ db.create_all()
 
 # Test
 with app.app_context():
-    u = Usuario(nombre_usuario='dev', password='12345')
-    a = Album(titulo='dev_prueba', year=1994, descripcion='holamundo', medio=Medio.CD)
-    # Juntar los usuarios
-    u.albumes.append(a)
-    #Agregamos a la base de datos
-    db.session.add(u)
-    #Guardamos en la base de datos
+    album_schema = AlbumSchema()
+    cancion_schema = CancionSchema()
+    usuario_schema = UsuarioSchema()
+    A = Album(titulo='Prueba', year=1994, descripcion='holoa', medio=Medio.CD)
+    U = Usuario(nombre_usuario='Prueba', password='12345')
+    C = Cancion(titulo='Prueba', minutos=1994, segundos=20, interprete='mateodev')
+    db.session.add(A)
+    db.session.add(U)
+    db.session.add(C)
     db.session.commit()
-    print(Usuario.query.all())
-    print(Usuario.query.all()[0].albumes)
-    # Eliminar algo en la BD
-    db.session.delete(u)
-    print(Album.query.all())
-    print(Usuario.query.all())
+    print([album_schema.dumps(album) for album in Album.query.all()])
+    print([cancion_schema.dumps(cancion) for cancion in Cancion.query.all()])
+    print([usuario_schema.dumps(usuario) for usuario in Usuario.query.all()])
